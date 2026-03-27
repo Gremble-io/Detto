@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tome – Recording UX Polish Mockup</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #1a1a1a;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+    color: #ebebee;
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+    gap: 60px;
+    flex-wrap: wrap;
+  }
+
+  .label {
+    color: #8c8c94;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  .sublabel {
+    color: #59595e;
+    font-size: 11px;
+    margin-bottom: 24px;
+    text-align: center;
+    max-width: 320px;
+  }
+
+  /* App Window */
+  .window {
+    width: 320px;
+    background: #0d0d0f;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  }
+
+  /* Top Bar */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+  }
+  .topbar-title {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 8px;
+    color: #ebebee;
+  }
+
+  /* Pulsing Dot */
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+  .pulse-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #ff3b30;
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  .pulse-dot.large {
+    width: 10px;
+    height: 10px;
+  }
+
+  .divider {
+    height: 1px;
+    background: #2a2a2e;
+  }
+
+  /* Transcript Area */
+  .transcript {
+    padding: 16px;
+    min-height: 160px;
+  }
+  .utterance {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .speaker {
+    font-size: 11px;
+    font-weight: 600;
+    min-width: 36px;
+    text-align: right;
+    padding-top: 2px;
+  }
+  .speaker.you { color: #a88bfa; }
+  .speaker.them { color: #8c8c94; }
+  .text {
+    font-size: 13px;
+    color: #ebebee;
+    line-height: 1.5;
+  }
+  .volatile {
+    opacity: 0.5;
+    font-style: italic;
+  }
+
+  /* Status Message */
+  .status-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 16px 4px 16px;
+  }
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  .spinner {
+    width: 12px;
+    height: 12px;
+    border: 2px solid transparent;
+    border-top-color: #a88bfa;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  .status-text {
+    font-size: 11px;
+    color: #8c8c94;
+  }
+
+  /* Control Bar */
+  .controlbar {
+    padding: 0;
+  }
+
+  /* Recording Button */
+  .rec-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px;
+    margin: 10px 12px;
+    background: #212124;
+    border-radius: 10px;
+    cursor: pointer;
+    border: none;
+    width: calc(100% - 24px);
+  }
+  .rec-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #ebebee;
+    flex: 1;
+    text-align: left;
+  }
+
+  /* Audio Level */
+  .audio-level {
+    display: flex;
+    gap: 2px;
+    align-items: flex-end;
+    height: 16px;
+  }
+  .bar {
+    width: 3px;
+    border-radius: 1px;
+    transition: background 0.08s;
+  }
+  .bar.active { background: rgba(168, 139, 250, 0.8); }
+  .bar.inactive { background: rgba(89, 89, 94, 0.2); }
+
+  /* Silence Warning */
+  .silence-warning {
+    font-size: 10px;
+    color: #ff9500;
+    padding: 0 16px 4px 16px;
+    text-align: left;
+  }
+
+  /* Idle Buttons */
+  .idle-buttons {
+    display: flex;
+    gap: 10px;
+    padding: 10px 12px;
+  }
+  .idle-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 18px 0;
+    background: #17171a;
+    border-radius: 10px;
+    cursor: pointer;
+    border: none;
+  }
+  .idle-btn-icon {
+    font-size: 20px;
+    color: #a88bfa;
+  }
+  .idle-btn-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: #8c8c94;
+  }
+  .shortcut-hint {
+    font-size: 9px;
+    color: #59595e;
+    margin-top: 2px;
+  }
+
+  /* Save Banner */
+  .save-banner {
+    display: flex;
+    align-items: center;
+    padding: 6px 16px;
+    gap: 8px;
+  }
+  .save-text {
+    font-size: 11px;
+    color: #8c8c94;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .save-action {
+    font-size: 11px;
+    color: #a88bfa;
+    cursor: pointer;
+    white-space: nowrap;
+    background: none;
+    border: none;
+  }
+
+  /* Error */
+  .error-text {
+    font-size: 10px;
+    color: #ff3b30;
+    padding: 4px 16px;
+  }
+
+  /* Column wrapper */
+  .col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* Arrow callout */
+  .callout {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-top: 12px;
+    max-width: 320px;
+  }
+  .callout-arrow {
+    color: #a88bfa;
+    font-size: 16px;
+    line-height: 1;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .callout-text {
+    font-size: 11px;
+    color: #8c8c94;
+    line-height: 1.5;
+  }
+  .callout-text strong {
+    color: #a88bfa;
+    font-weight: 600;
+  }
+
+  /* Section */
+  .section-title {
+    color: #a88bfa;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-align: center;
+    padding: 40px 0 8px;
+    width: 100%;
+  }
+  .section-divider {
+    width: 100%;
+    max-width: 700px;
+    height: 1px;
+    background: #2a2a2e;
+    margin: 40px 0;
+  }
+</style>
+</head>
+<body>
+
+<!-- STATE 1: IDLE (Before) -->
+<div class="col">
+  <div class="label">Current — Idle</div>
+  <div class="sublabel">Static dot, no shortcuts, no hints</div>
+  <div class="window">
+    <div class="topbar">
+      <span class="topbar-title">TOME</span>
+    </div>
+    <div class="divider"></div>
+    <div class="transcript">
+      <div style="color: #59595e; font-size: 12px; text-align: center; padding-top: 50px;">
+        Start a session to begin transcribing
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="controlbar">
+      <div class="idle-buttons">
+        <button class="idle-btn">
+          <span class="idle-btn-icon">📞</span>
+          <span class="idle-btn-label">Call Capture</span>
+        </button>
+        <button class="idle-btn">
+          <span class="idle-btn-icon">🎤</span>
+          <span class="idle-btn-label">Voice Memo</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STATE 1: IDLE (After) -->
+<div class="col">
+  <div class="label">New — Idle</div>
+  <div class="sublabel">Keyboard shortcut hints on buttons</div>
+  <div class="window">
+    <div class="topbar">
+      <span class="topbar-title">TOME</span>
+    </div>
+    <div class="divider"></div>
+    <div class="transcript">
+      <div style="color: #59595e; font-size: 12px; text-align: center; padding-top: 50px;">
+        Start a session to begin transcribing
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="controlbar">
+      <div class="idle-buttons">
+        <button class="idle-btn">
+          <span class="idle-btn-icon">📞</span>
+          <span class="idle-btn-label">Call Capture</span>
+          <span class="shortcut-hint">⌘R</span>
+        </button>
+        <button class="idle-btn">
+          <span class="idle-btn-icon">🎤</span>
+          <span class="idle-btn-label">Voice Memo</span>
+          <span class="shortcut-hint">⌘⇧R</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="callout">
+    <span class="callout-arrow">→</span>
+    <span class="callout-text"><strong>Keyboard shortcuts</strong> shown as hints. ⌘R for Call Capture, ⌘⇧R for Voice Memo.</span>
+  </div>
+</div>
+
+<!-- STATE 2: RECORDING (Before) -->
+<div class="col">
+  <div class="label">Current — Recording</div>
+  <div class="sublabel">Static red dot, no silence feedback</div>
+  <div class="window">
+    <div class="topbar">
+      <span class="topbar-title">TOME</span>
+      <div style="width:6px;height:6px;border-radius:50%;background:#ff3b30;"></div>
+    </div>
+    <div class="divider"></div>
+    <div class="transcript">
+      <div class="utterance">
+        <span class="speaker you">You</span>
+        <span class="text">So I think we should move forward with the new design system.</span>
+      </div>
+      <div class="utterance">
+        <span class="speaker them">Them</span>
+        <span class="text">Agreed, the current one is getting hard to maintain.</span>
+      </div>
+      <div class="utterance">
+        <span class="speaker you">You</span>
+        <span class="text volatile">Let me pull up the...</span>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="controlbar">
+      <button class="rec-btn">
+        <div style="width:10px;height:10px;border-radius:50%;background:#ff3b30;"></div>
+        <span class="rec-label">Recording — Zoom</span>
+        <div class="audio-level">
+          <div class="bar active" style="height:4px;"></div>
+          <div class="bar active" style="height:8px;"></div>
+          <div class="bar active" style="height:14px;"></div>
+          <div class="bar active" style="height:10px;"></div>
+          <div class="bar inactive" style="height:6px;"></div>
+          <div class="bar inactive" style="height:3px;"></div>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- STATE 2: RECORDING (After) -->
+<div class="col">
+  <div class="label">New — Recording</div>
+  <div class="sublabel">Pulsing dot, ⌘. to stop</div>
+  <div class="window">
+    <div class="topbar">
+      <span class="topbar-title">TOME</span>
+      <div class="pulse-dot"></div>
+    </div>
+    <div class="divider"></div>
+    <div class="transcript">
+      <div class="utterance">
+        <span class="speaker you">You</span>
+        <span class="text">So I think we should move forward with the new design system.</span>
+      </div>
+      <div class="utterance">
+        <span class="speaker them">Them</span>
+        <span class="text">Agreed, the current one is getting hard to maintain.</span>
+      </div>
+      <div class="utterance">
+        <span class="speaker you">You</span>
+        <span class="text volatile">Let me pull up the...</span>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="controlbar">
+      <button class="rec-btn">
+        <div class="pulse-dot large"></div>
+        <span class="rec-label">Recording — Zoom</span>
+        <div class="audio-level">
+          <div class="bar active" style="height:4px;"></div>
+          <div class="bar active" style="height:8px;"></div>
+          <div class="bar active" style="height:14px;"></div>
+          <div class="bar active" style="height:10px;"></div>
+          <div class="bar inactive" style="height:6px;"></div>
+          <div class="bar inactive" style="height:3px;"></div>
+        </div>
+      </button>
+    </div>
+  </div>
+  <div class="callout">
+    <span class="callout-arrow">→</span>
+    <span class="callout-text"><strong>Pulsing red dot</strong> in both the top bar and recording button. Feels alive. Press <strong>⌘.</strong> to stop.</span>
+  </div>
+</div>
+
+<!-- STATE 3: SILENCE WARNING -->
+<div class="col">
+  <div class="label">New — Silence Warning</div>
+  <div class="sublabel">Countdown appears after 90s of silence</div>
+  <div class="window">
+    <div class="topbar">
+      <span class="topbar-title">TOME</span>
+      <div class="pulse-dot"></div>
+    </div>
+    <div class="divider"></div>
+    <div class="transcript">
+      <div class="utterance">
+        <span class="speaker you">You</span>
+        <span class="text">Let me know when you're back.</span>
+      </div>
+      <div class="utterance">
+        <span class="speaker them">Them</span>
+        <span class="text">Sure, one sec.</span>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="controlbar">
+      <button class="rec-btn">
+        <div class="pulse-dot large"></div>
+        <span class="rec-label">Recording — Zoom</span>
+        <div class="audio-level">
+          <div class="bar inactive" style="height:3px;"></div>
+          <div class="bar inactive" style="height:3px;"></div>
+          <div class="bar inactive" style="height:3px;"></div>
+          <div class="bar inactive" style="height:3px;"></div>
+          <div class="bar inactive" style="height:3px;"></div>
+          <div class="bar inactive" style="height:3px;"></div>
+        </div>
+      </button>
+      <div class="silence-warning">Silence — auto-stop in 22s</div>
+    </div>
+  </div>
+  <div class="callout">
+    <span class="callout-arrow">→</span>
+    <span class="callout-text"><strong>Orange countdown</strong> appears after 90 seconds of silence. Gives 30 seconds of warning before auto-stop at 120s. Speak or tap to dismiss.</span>
+  </div>
+</div>
+
+<!-- STATE 4: POST-SESSION DIARIZATION -->
+<div class="col">
+  <div class="label">New — Post-Session Processing</div>
+  <div class="sublabel">Status messages during diarization</div>
+  <div class="window">
+    <div class="topbar">
+      <span class="topbar-title">TOME</span>
+    </div>
+    <div class="divider"></div>
+    <div class="transcript">
+      <div class="utterance">
+        <span class="speaker you">You</span>
+        <span class="text">Thanks for the chat, talk soon.</span>
+      </div>
+      <div class="utterance">
+        <span class="speaker them">Them</span>
+        <span class="text">Sounds good, bye!</span>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="controlbar">
+      <div class="status-bar">
+        <div class="spinner"></div>
+        <span class="status-text">Identifying speakers...</span>
+      </div>
+      <div class="idle-buttons">
+        <button class="idle-btn">
+          <span class="idle-btn-icon">📞</span>
+          <span class="idle-btn-label">Call Capture</span>
+          <span class="shortcut-hint">⌘R</span>
+        </button>
+        <button class="idle-btn">
+          <span class="idle-btn-icon">🎤</span>
+          <span class="idle-btn-label">Voice Memo</span>
+          <span class="shortcut-hint">⌘⇧R</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="callout">
+    <span class="callout-arrow">→</span>
+    <span class="callout-text"><strong>Progress spinner + status</strong> cycles through: "Identifying speakers..." → "Rewriting transcript..." → "Finalizing..." → save banner. Uses existing ControlBar status area.</span>
+  </div>
+</div>
+
+<!-- STATE 5: SAVE BANNER (existing, for context) -->
+<div class="col">
+  <div class="label">Save Banner (from previous PR)</div>
+  <div class="sublabel">Shown after processing completes</div>
+  <div class="window">
+    <div class="topbar">
+      <span class="topbar-title">TOME</span>
+    </div>
+    <div class="divider"></div>
+    <div class="transcript">
+      <div class="utterance">
+        <span class="speaker you">You</span>
+        <span class="text">Thanks for the chat, talk soon.</span>
+      </div>
+      <div class="utterance">
+        <span class="speaker them">Them</span>
+        <span class="text">Sounds good, bye!</span>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="save-banner">
+      <span class="save-text">Saved to 2026-03-27 Design Review.md</span>
+      <button class="save-action">Show in Finder</button>
+    </div>
+    <div class="controlbar">
+      <div class="idle-buttons">
+        <button class="idle-btn">
+          <span class="idle-btn-icon">📞</span>
+          <span class="idle-btn-label">Call Capture</span>
+          <span class="shortcut-hint">⌘R</span>
+        </button>
+        <button class="idle-btn">
+          <span class="idle-btn-icon">🎤</span>
+          <span class="idle-btn-label">Voice Memo</span>
+          <span class="shortcut-hint">⌘⇧R</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="callout">
+    <span class="callout-arrow">→</span>
+    <span class="callout-text">After diarization completes, the <strong>save banner</strong> appears with filename and "Show in Finder" action. Auto-dismisses after 8 seconds.</span>
+  </div>
+</div>
+
+</body>
+</html>
