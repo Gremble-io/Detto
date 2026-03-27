@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tome - Warm & Approachable Style Mockup</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #131110;
+    background-image:
+      radial-gradient(ellipse at 30% 30%, rgba(196,160,255,0.06) 0%, transparent 55%),
+      radial-gradient(ellipse at 70% 70%, rgba(232,184,109,0.04) 0%, transparent 55%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    font-family: 'Nunito', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    padding: 60px 20px;
+  }
+
+  h1 {
+    color: #F0EDE8;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    text-align: center;
+  }
+  h1 span {
+    background: linear-gradient(135deg, #C4A0FF, #E8B86D);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .subtitle {
+    color: #8A8480;
+    font-size: 14px;
+    text-align: center;
+    margin-top: -20px;
+    font-weight: 400;
+  }
+
+  .mockup-row {
+    display: flex;
+    gap: 64px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .mockup-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .state-label {
+    color: #8A8480;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  /* ---- Window chrome ---- */
+  .window {
+    width: 320px;
+    border-radius: 14px;
+    overflow: hidden;
+    background: #1A1818;
+    box-shadow:
+      0 24px 80px rgba(0,0,0,0.5),
+      0 8px 24px rgba(0,0,0,0.3),
+      0 2px 8px rgba(0,0,0,0.2),
+      inset 0 1px 0 rgba(255,255,255,0.04);
+    position: relative;
+    border: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .window.recording {
+    box-shadow:
+      0 24px 80px rgba(0,0,0,0.5),
+      0 8px 24px rgba(0,0,0,0.3),
+      0 0 50px rgba(196,160,255,0.06),
+      0 0 20px rgba(232,184,109,0.04),
+      inset 0 1px 0 rgba(255,255,255,0.04);
+    border-color: rgba(196,160,255,0.12);
+  }
+
+  /* ---- Top bar ---- */
+  .top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    background: rgba(36,33,32,0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+  }
+
+  .top-bar-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .app-title {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    color: #F0EDE8;
+  }
+
+  .rec-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #E05555;
+    box-shadow: 0 0 10px rgba(224,85,85,0.5), 0 0 4px rgba(224,85,85,0.3);
+    animation: pulse 1.8s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.8); }
+  }
+
+  .timer {
+    font-size: 12px;
+    font-weight: 500;
+    color: #8A8480;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---- Transcript area ---- */
+  .transcript {
+    padding: 18px 20px;
+    min-height: 220px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .transcript-line {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .speaker {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+  }
+
+  .speaker.you { color: #E8B86D; }
+  .speaker.them { color: #8BAF8B; }
+
+  .text {
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: #F0EDE8;
+    font-weight: 400;
+  }
+
+  .text.faded {
+    color: #8A8480;
+  }
+
+  .cursor-blink {
+    display: inline-block;
+    width: 2px;
+    height: 14px;
+    background: #C4A0FF;
+    margin-left: 2px;
+    vertical-align: text-bottom;
+    animation: blink 1s step-end infinite;
+    border-radius: 1px;
+    box-shadow: 0 0 6px rgba(196,160,255,0.4);
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  /* ---- Waveform ---- */
+  .waveform-bar-area {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    padding: 10px 18px 4px;
+  }
+
+  .waveform-bar-area .bar {
+    width: 3px;
+    border-radius: 2px;
+    background: linear-gradient(180deg, #C4A0FF, #9B7AD8);
+    opacity: 0.6;
+  }
+
+  .waveform-bar-area .bar.animated {
+    animation: waveAnim 1.2s ease-in-out infinite alternate;
+  }
+
+  @keyframes waveAnim {
+    0% { transform: scaleY(0.4); }
+    100% { transform: scaleY(1); }
+  }
+
+  /* ---- Empty state ---- */
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 220px;
+    gap: 12px;
+  }
+
+  .empty-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: rgba(196,160,255,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+
+  .empty-icon svg {
+    width: 22px;
+    height: 22px;
+    color: #C4A0FF;
+  }
+
+  .empty-text {
+    color: #8A8480;
+    font-size: 13.5px;
+    font-weight: 500;
+  }
+
+  .empty-hint {
+    color: rgba(138,132,128,0.5);
+    font-size: 11.5px;
+    font-weight: 400;
+  }
+
+  /* ---- Control bar ---- */
+  .control-bar {
+    padding: 14px 18px;
+    border-top: 1px solid rgba(255,255,255,0.03);
+    background: rgba(36,33,32,0.5);
+    display: flex;
+    gap: 10px;
+  }
+
+  .btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 11px 0;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+    position: relative;
+  }
+
+  .btn-call {
+    background: rgba(196,160,255,0.1);
+    color: #D4BBFF;
+    box-shadow:
+      0 2px 6px rgba(0,0,0,0.15),
+      inset 0 1px 0 rgba(255,255,255,0.04);
+  }
+
+  .btn-call:hover {
+    background: rgba(196,160,255,0.18);
+  }
+
+  .btn-memo {
+    background: rgba(255,255,255,0.04);
+    color: #B0AAA4;
+    box-shadow:
+      0 2px 6px rgba(0,0,0,0.15),
+      inset 0 1px 0 rgba(255,255,255,0.03);
+  }
+
+  .btn-memo:hover {
+    background: rgba(255,255,255,0.07);
+  }
+
+  .btn svg {
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
+  }
+
+  .btn-stop {
+    background: rgba(224,85,85,0.12);
+    color: #F0A0A0;
+    box-shadow:
+      0 2px 8px rgba(0,0,0,0.15),
+      inset 0 1px 0 rgba(255,255,255,0.04);
+  }
+
+  .btn-stop:hover {
+    background: rgba(224,85,85,0.2);
+  }
+
+  .stop-icon {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    background: #F0A0A0;
+  }
+
+  /* ---- Recording mode badge ---- */
+  .mode-badge {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: #8A8480;
+    background: rgba(255,255,255,0.04);
+    padding: 3px 8px;
+    border-radius: 6px;
+  }
+
+  /* ---- Divider line ---- */
+  .transcript-divider {
+    height: 1px;
+    background: rgba(255,255,255,0.03);
+    margin: 2px 0;
+  }
+
+  /* ---- Style notes below mockups ---- */
+  .notes {
+    max-width: 700px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .note-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .swatch {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+  }
+
+  .note-label {
+    font-size: 12px;
+    color: #8A8480;
+  }
+  .note-label code {
+    color: #B0AAA4;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 11px;
+    background: rgba(255,255,255,0.04);
+    padding: 1px 5px;
+    border-radius: 4px;
+  }
+</style>
+</head>
+<body>
+
+<h1><span>Tome</span> — Warm &amp; Approachable</h1>
+<p class="subtitle">Friendly, soft edges, cozy notebook feel &mdash; like Notion or Bear</p>
+
+<div class="mockup-row">
+
+  <!-- ============ IDLE STATE ============ -->
+  <div class="mockup-col">
+    <span class="state-label">Idle</span>
+    <div class="window">
+      <!-- Top bar -->
+      <div class="top-bar">
+        <div class="top-bar-left">
+          <span class="app-title">TOME</span>
+        </div>
+        <span class="mode-badge">Ready</span>
+      </div>
+
+      <!-- Empty state -->
+      <div class="empty-state">
+        <div class="empty-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+            <line x1="12" y1="19" x2="12" y2="23"/>
+            <line x1="8" y1="23" x2="16" y2="23"/>
+          </svg>
+        </div>
+        <span class="empty-text">Ready to listen</span>
+        <span class="empty-hint">Start a capture to begin transcribing</span>
+      </div>
+
+      <!-- Control bar: two buttons -->
+      <div class="control-bar">
+        <button class="btn btn-call">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+          </svg>
+          Call Capture
+        </button>
+        <button class="btn btn-memo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+            <line x1="12" y1="19" x2="12" y2="23"/>
+            <line x1="8" y1="23" x2="16" y2="23"/>
+          </svg>
+          Voice Memo
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ RECORDING STATE ============ -->
+  <div class="mockup-col">
+    <span class="state-label">Recording</span>
+    <div class="window recording">
+      <!-- Top bar -->
+      <div class="top-bar">
+        <div class="top-bar-left">
+          <span class="app-title">TOME</span>
+          <div class="rec-dot"></div>
+        </div>
+        <span class="timer">02:34</span>
+      </div>
+
+      <!-- Transcript -->
+      <div class="transcript">
+        <div class="transcript-line">
+          <span class="speaker you">👤 You</span>
+          <span class="text">I think we should focus on the onboarding flow first. It's the biggest drop-off point right now.</span>
+        </div>
+
+        <div class="transcript-divider"></div>
+
+        <div class="transcript-line">
+          <span class="speaker them">👤 Them</span>
+          <span class="text">Agreed. We saw a 40% drop-off at step three. Maybe we can simplify the permissions screen?</span>
+        </div>
+
+        <div class="transcript-divider"></div>
+
+        <div class="transcript-line">
+          <span class="speaker you">👤 You</span>
+          <span class="text">Yeah, let's try a progressive approach where we only ask for&nbsp;<span class="cursor-blink"></span></span>
+        </div>
+      </div>
+
+      <!-- Waveform -->
+      <div class="waveform-bar-area">
+        <div class="bar animated" style="height:12px; animation-delay:0.0s"></div>
+        <div class="bar animated" style="height:18px; animation-delay:0.1s"></div>
+        <div class="bar animated" style="height:10px; animation-delay:0.2s"></div>
+        <div class="bar animated" style="height:22px; animation-delay:0.05s"></div>
+        <div class="bar animated" style="height:14px; animation-delay:0.15s"></div>
+        <div class="bar animated" style="height:20px; animation-delay:0.08s"></div>
+        <div class="bar animated" style="height:8px;  animation-delay:0.22s"></div>
+        <div class="bar animated" style="height:16px; animation-delay:0.12s"></div>
+        <div class="bar animated" style="height:24px; animation-delay:0.03s"></div>
+        <div class="bar animated" style="height:12px; animation-delay:0.18s"></div>
+        <div class="bar animated" style="height:18px; animation-delay:0.07s"></div>
+        <div class="bar animated" style="height:10px; animation-delay:0.25s"></div>
+        <div class="bar animated" style="height:20px; animation-delay:0.1s"></div>
+        <div class="bar animated" style="height:14px; animation-delay:0.2s"></div>
+        <div class="bar animated" style="height:22px; animation-delay:0.02s"></div>
+        <div class="bar animated" style="height:8px;  animation-delay:0.16s"></div>
+        <div class="bar animated" style="height:16px; animation-delay:0.09s"></div>
+        <div class="bar animated" style="height:12px; animation-delay:0.23s"></div>
+        <div class="bar animated" style="height:20px; animation-delay:0.06s"></div>
+        <div class="bar animated" style="height:14px; animation-delay:0.14s"></div>
+      </div>
+
+      <!-- Control bar: stop button -->
+      <div class="control-bar">
+        <button class="btn btn-stop">
+          <div class="stop-icon"></div>
+          Stop Recording
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Palette notes -->
+<div class="notes">
+  <div class="note-row">
+    <div class="swatch" style="background:#1A1818"></div>
+    <span class="note-label">Background <code>#1A1818</code> — warm dark with brown undertone</span>
+  </div>
+  <div class="note-row">
+    <div class="swatch" style="background:#242120"></div>
+    <span class="note-label">Surface <code>#242120</code> — warm dark surface</span>
+  </div>
+  <div class="note-row">
+    <div class="swatch" style="background:#F0EDE8"></div>
+    <span class="note-label">Primary text <code>#F0EDE8</code> — cream off-white</span>
+  </div>
+  <div class="note-row">
+    <div class="swatch" style="background:#8A8480"></div>
+    <span class="note-label">Secondary text <code>#8A8480</code> — warm gray</span>
+  </div>
+  <div class="note-row">
+    <div class="swatch" style="background:#C4A0FF"></div>
+    <span class="note-label">Accent <code>#C4A0FF</code> — soft lavender purple</span>
+  </div>
+  <div class="note-row">
+    <div class="swatch" style="background:#E8B86D"></div>
+    <span class="note-label">Speaker "You" <code>#E8B86D</code> — warm amber/gold</span>
+  </div>
+  <div class="note-row">
+    <div class="swatch" style="background:#8BAF8B"></div>
+    <span class="note-label">Speaker "Them" <code>#8BAF8B</code> — soft sage green</span>
+  </div>
+  <div class="note-row">
+    <div class="swatch" style="background:#E05555"></div>
+    <span class="note-label">Recording dot <code>#E05555</code> — warm red</span>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Tome — Minimal & Calm Style</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #111;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    padding: 60px 20px;
+    flex-wrap: wrap;
+  }
+  .col { display: flex; flex-direction: column; align-items: center; }
+  .label { color: #6B6B70; font-size: 12px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 16px; text-align: center; }
+  .sublabel { color: #4a4a4e; font-size: 11px; margin-bottom: 20px; text-align: center; max-width: 320px; }
+
+  .window {
+    width: 320px;
+    background: #0F0F0F;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+  }
+
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+  }
+  .title {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 8px;
+    color: #E8E8EA;
+  }
+
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  .rec-dot {
+    width: 6px; height: 6px; border-radius: 50%; background: #E54040;
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+
+  .divider { height: 1px; background: #1A1A1C; }
+
+  .transcript {
+    padding: 24px;
+    min-height: 200px;
+  }
+  .empty-state {
+    color: #3A3A3E;
+    font-size: 13px;
+    text-align: center;
+    padding: 70px 0;
+  }
+  .utterance { margin-bottom: 20px; }
+  .speaker {
+    font-size: 11px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .speaker.you { color: #A78BFA; }
+  .speaker.them { color: #6B6B70; }
+  .text {
+    font-size: 14px;
+    color: #E8E8EA;
+    line-height: 1.7;
+  }
+  .volatile {
+    color: #E8E8EA;
+    opacity: 0.4;
+  }
+
+  .controls { padding: 20px 24px; }
+  .idle-btns { display: flex; gap: 12px; }
+  .idle-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 22px 0;
+    background: #151517;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+  }
+  .idle-btn-icon { font-size: 20px; color: #A78BFA; }
+  .idle-btn-label { font-size: 11px; font-weight: 500; color: #6B6B70; }
+
+  .rec-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    background: #151517;
+    border-radius: 10px;
+    border: none;
+    width: 100%;
+    cursor: pointer;
+  }
+  .rec-dot-lg {
+    width: 10px; height: 10px; border-radius: 50%; background: #E54040;
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  .rec-label { font-size: 13px; font-weight: 500; color: #E8E8EA; flex: 1; text-align: left; }
+  .rec-time { font-size: 12px; color: #6B6B70; font-variant-numeric: tabular-nums; }
+
+  .callout { margin-top: 16px; max-width: 320px; }
+  .callout-text { font-size: 11px; color: #4a4a4e; line-height: 1.6; text-align: center; }
+  .callout-text em { color: #A78BFA; font-style: normal; }
+</style>
+</head>
+<body>
+
+<div class="col">
+  <div class="label">Minimal & Calm — Idle</div>
+  <div class="sublabel">Maximum restraint. The app disappears.</div>
+  <div class="window">
+    <div class="topbar">
+      <span class="title">TOME</span>
+    </div>
+    <div class="divider"></div>
+    <div class="transcript">
+      <div class="empty-state">Start a session to begin</div>
+    </div>
+    <div class="divider"></div>
+    <div class="controls">
+      <div class="idle-btns">
+        <button class="idle-btn">
+          <span class="idle-btn-icon">📞</span>
+          <span class="idle-btn-label">Call Capture</span>
+        </button>
+        <button class="idle-btn">
+          <span class="idle-btn-icon">🎤</span>
+          <span class="idle-btn-label">Voice Memo</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="callout">
+    <div class="callout-text">Like iA Writer or Things 3. <em>Nothing extra.</em> Generous whitespace, muted tones, content-first.</div>
+  </div>
+</div>
+
+<div class="col">
+  <div class="label">Minimal & Calm — Recording</div>
+  <div class="sublabel">Only essential information visible</div>
+  <div class="window">
+    <div class="topbar">
+      <span class="title">TOME</span>
+      <div class="rec-dot"></div>
+    </div>
+    <div class="divider"></div>
+    <div class="transcript">
+      <div class="utterance">
+        <div class="speaker you">You</div>
+        <div class="text">I think we should revisit the timeline on this. The current one feels too aggressive.</div>
+      </div>
+      <div class="utterance">
+        <div class="speaker them">Them</div>
+        <div class="text">Agreed. Let me check with the team and get back to you by Friday.</div>
+      </div>
+      <div class="utterance">
+        <div class="speaker you">You</div>
+        <div class="text volatile">That works, and also...</div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="controls">
+      <button class="rec-btn">
+        <div class="rec-dot-lg"></div>
+        <span class="rec-label">Recording — Zoom</span>
+        <span class="rec-time">02:34</span>
+      </button>
+    </div>
+  </div>
+  <div class="callout">
+    <div class="callout-text">Purple only on <em>You</em> speaker label. Everything else is greyscale. The transcript is the entire focus.</div>
+  </div>
+</div>
+
+</body>
+</html>

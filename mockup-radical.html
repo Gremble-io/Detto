@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Tome — "The Living Page" Radical Redesign</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #080610;
+    font-family: 'Georgia', 'Times New Roman', serif;
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+    padding: 60px 20px;
+    flex-wrap: wrap;
+  }
+  .col { display: flex; flex-direction: column; align-items: center; }
+  .label { font-family: -apple-system, sans-serif; color: #6B6B70; font-size: 12px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; }
+  .sublabel { font-family: -apple-system, sans-serif; color: #4a4a4e; font-size: 11px; margin-bottom: 20px; text-align: center; max-width: 320px; line-height: 1.5; }
+
+  /* The Page — no traditional window chrome */
+  .page {
+    width: 320px;
+    background: #0D0B0F;
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .page.recording {
+    box-shadow:
+      0 0 60px rgba(139, 92, 246, 0.12),
+      0 0 120px rgba(139, 92, 246, 0.06),
+      0 8px 32px rgba(0,0,0,0.5);
+  }
+  .page.idle {
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  }
+  .page.saved {
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    transform: perspective(800px) rotateY(-1deg) scale(0.98);
+  }
+
+  /* Noise texture overlay */
+  .page::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1;
+    border-radius: 16px;
+  }
+
+  /* Liquid Glass header */
+  .header {
+    position: relative;
+    z-index: 2;
+    padding: 20px 24px 16px;
+    background: rgba(255,255,255,0.03);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .header-title {
+    font-family: -apple-system, sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 8px;
+    color: #F0ECF8;
+  }
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .timer {
+    font-family: -apple-system, sans-serif;
+    font-size: 12px;
+    color: #8B5CF6;
+    font-variant-numeric: tabular-nums;
+    font-weight: 500;
+  }
+
+  @keyframes glow-pulse {
+    0%,100% { opacity: 1; box-shadow: 0 0 8px rgba(139,92,246,0.6); }
+    50% { opacity: 0.4; box-shadow: 0 0 4px rgba(139,92,246,0.2); }
+  }
+  .rec-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #8B5CF6;
+    animation: glow-pulse 1.6s ease-in-out infinite;
+  }
+
+  /* Waveform ribbon */
+  .waveform-ribbon {
+    position: relative;
+    z-index: 2;
+    height: 28px;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+  .wave-container {
+    width: 100%;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+  .wave-bar {
+    flex: 1;
+    border-radius: 1px;
+    transition: height 0.1s ease-out;
+  }
+  .wave-bar.active {
+    background: linear-gradient(180deg, #8B5CF6, #C084FC);
+    box-shadow: 0 0 6px rgba(139,92,246,0.4);
+  }
+  .wave-bar.idle {
+    background: rgba(139,92,246,0.1);
+    height: 2px !important;
+  }
+
+  @keyframes wave-dance {
+    0%,100% { height: 4px; }
+    25% { height: var(--h1); }
+    50% { height: var(--h2); }
+    75% { height: var(--h3); }
+  }
+  .wave-bar.animated {
+    animation: wave-dance 0.8s ease-in-out infinite;
+  }
+
+  /* Transcript — flowing prose, like dialogue in a novel */
+  .prose {
+    position: relative;
+    z-index: 2;
+    padding: 20px 24px 16px;
+    min-height: 220px;
+  }
+  .prose-empty {
+    color: #3A3640;
+    font-size: 14px;
+    font-style: italic;
+    text-align: center;
+    padding: 80px 20px;
+    line-height: 1.8;
+  }
+  .dialogue {
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .dialogue.them {
+    padding-left: 20px;
+    border-left: 2px solid rgba(139,92,246,0.2);
+  }
+  .dialogue .who {
+    font-family: -apple-system, sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .dialogue.you .who { color: rgba(139,92,246,0.6); }
+  .dialogue.them .who { color: rgba(176,172,184,0.5); }
+  .dialogue .words {
+    font-size: 14px;
+    line-height: 1.8;
+    letter-spacing: 0.01em;
+  }
+  .dialogue.you .words { color: #F0ECF8; }
+  .dialogue.them .words { color: #B0ACB8; }
+  .dialogue .volatile {
+    opacity: 0.4;
+    font-style: italic;
+  }
+
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+  .cursor {
+    display: inline-block;
+    width: 1.5px;
+    height: 14px;
+    background: #8B5CF6;
+    margin-left: 2px;
+    vertical-align: text-bottom;
+    animation: blink 1s step-end infinite;
+  }
+
+  /* Controls */
+  .controls {
+    position: relative;
+    z-index: 2;
+    padding: 12px 24px 24px;
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+  }
+  .ctrl-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s cubic-bezier(0.16,1,0.3,1);
+  }
+  .ctrl-btn:hover { transform: scale(1.08); }
+  .ctrl-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    background: #14121A;
+    border: 1px solid rgba(255,255,255,0.05);
+    transition: all 0.2s ease;
+  }
+  .ctrl-btn:hover .ctrl-icon {
+    box-shadow: 0 0 20px rgba(139,92,246,0.2);
+    border-color: rgba(139,92,246,0.2);
+  }
+  .ctrl-label {
+    font-family: -apple-system, sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    color: #6B6670;
+    letter-spacing: 0.5px;
+  }
+
+  /* Stop button — pulsing circle */
+  .stop-area {
+    position: relative;
+    z-index: 2;
+    padding: 12px 24px 24px;
+    display: flex;
+    justify-content: center;
+  }
+  @keyframes stop-pulse {
+    0%,100% { box-shadow: 0 0 0 0 rgba(139,92,246,0.4); }
+    50% { box-shadow: 0 0 0 12px rgba(139,92,246,0); }
+  }
+  .stop-btn {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: stop-pulse 2s ease-in-out infinite;
+    transition: transform 0.2s;
+  }
+  .stop-btn:hover { transform: scale(1.06); }
+  .stop-square {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    background: white;
+  }
+
+  /* Saved state banner */
+  .saved-banner {
+    position: relative;
+    z-index: 2;
+    padding: 16px 24px;
+    text-align: center;
+  }
+  .saved-text {
+    font-family: -apple-system, sans-serif;
+    font-size: 12px;
+    color: #6B6670;
+  }
+  .saved-file {
+    font-family: -apple-system, sans-serif;
+    font-size: 13px;
+    color: #8B5CF6;
+    margin-top: 4px;
+    cursor: pointer;
+  }
+  .saved-check {
+    font-size: 20px;
+    margin-bottom: 6px;
+    opacity: 0.7;
+  }
+
+  .callout { margin-top: 16px; max-width: 320px; }
+  .callout-text { font-family: -apple-system, sans-serif; font-size: 11px; color: #4a4a4e; line-height: 1.6; text-align: center; }
+  .callout-text em { color: #8B5CF6; font-style: normal; font-weight: 500; }
+</style>
+</head>
+<body>
+
+<!-- IDLE STATE -->
+<div class="col">
+  <div class="label">The Living Page — Idle</div>
+  <div class="sublabel">No chrome. The window IS the page.</div>
+  <div class="page idle">
+    <div class="header">
+      <span class="header-title">TOME</span>
+    </div>
+    <div class="waveform-ribbon">
+      <div class="wave-container">
+        <div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div>
+      </div>
+    </div>
+    <div class="prose">
+      <div class="prose-empty">The page is blank.<br>Begin when you're ready.</div>
+    </div>
+    <div class="controls">
+      <button class="ctrl-btn">
+        <div class="ctrl-icon">📞</div>
+        <span class="ctrl-label">Capture</span>
+      </button>
+      <button class="ctrl-btn">
+        <div class="ctrl-icon">🎤</div>
+        <span class="ctrl-label">Memo</span>
+      </button>
+    </div>
+  </div>
+  <div class="callout">
+    <div class="callout-text"><em>Flat waveform line</em> when silent. Circular icon buttons hover with purple underglow. Serif empty state feels like opening a journal.</div>
+  </div>
+</div>
+
+<!-- RECORDING STATE -->
+<div class="col">
+  <div class="label">The Living Page — Recording</div>
+  <div class="sublabel">The page comes alive. Purple glow from the edges.</div>
+  <div class="page recording">
+    <div class="header">
+      <span class="header-title">TOME</span>
+      <div class="header-right">
+        <span class="timer">02:34</span>
+        <div class="rec-dot"></div>
+      </div>
+    </div>
+    <div class="waveform-ribbon">
+      <div class="wave-container">
+        <div class="wave-bar active animated" style="--h1:6px;--h2:10px;--h3:4px;height:8px"></div>
+        <div class="wave-bar active animated" style="--h1:12px;--h2:5px;--h3:14px;height:10px;animation-delay:0.05s"></div>
+        <div class="wave-bar active animated" style="--h1:8px;--h2:16px;--h3:6px;height:14px;animation-delay:0.1s"></div>
+        <div class="wave-bar active animated" style="--h1:14px;--h2:8px;--h3:18px;height:12px;animation-delay:0.15s"></div>
+        <div class="wave-bar active animated" style="--h1:6px;--h2:12px;--h3:8px;height:16px;animation-delay:0.2s"></div>
+        <div class="wave-bar active animated" style="--h1:10px;--h2:4px;--h3:14px;height:8px;animation-delay:0.25s"></div>
+        <div class="wave-bar active animated" style="--h1:16px;--h2:10px;--h3:6px;height:12px;animation-delay:0.3s"></div>
+        <div class="wave-bar active animated" style="--h1:4px;--h2:14px;--h3:10px;height:6px;animation-delay:0.35s"></div>
+        <div class="wave-bar active animated" style="--h1:12px;--h2:6px;--h3:16px;height:10px;animation-delay:0.4s"></div>
+        <div class="wave-bar active animated" style="--h1:8px;--h2:18px;--h3:4px;height:14px;animation-delay:0.45s"></div>
+        <div class="wave-bar active animated" style="--h1:14px;--h2:8px;--h3:12px;height:8px;animation-delay:0.5s"></div>
+        <div class="wave-bar active animated" style="--h1:6px;--h2:12px;--h3:18px;height:16px;animation-delay:0.55s"></div>
+        <div class="wave-bar active animated" style="--h1:10px;--h2:4px;--h3:8px;height:6px;animation-delay:0.6s"></div>
+        <div class="wave-bar active animated" style="--h1:18px;--h2:10px;--h3:6px;height:12px;animation-delay:0.65s"></div>
+        <div class="wave-bar active animated" style="--h1:4px;--h2:14px;--h3:10px;height:10px;animation-delay:0.7s"></div>
+        <div class="wave-bar active animated" style="--h1:12px;--h2:6px;--h3:16px;height:14px;animation-delay:0.75s"></div>
+        <div class="wave-bar active animated" style="--h1:8px;--h2:18px;--h3:4px;height:8px;animation-delay:0.8s"></div>
+        <div class="wave-bar active animated" style="--h1:14px;--h2:8px;--h3:12px;height:16px;animation-delay:0.85s"></div>
+        <div class="wave-bar active animated" style="--h1:6px;--h2:12px;--h3:8px;height:6px;animation-delay:0.9s"></div>
+        <div class="wave-bar active animated" style="--h1:10px;--h2:16px;--h3:14px;height:10px;animation-delay:0.95s"></div>
+        <div class="wave-bar active animated" style="--h1:16px;--h2:4px;--h3:10px;height:12px;animation-delay:1s"></div>
+        <div class="wave-bar active animated" style="--h1:4px;--h2:10px;--h3:16px;height:8px;animation-delay:1.05s"></div>
+        <div class="wave-bar active animated" style="--h1:12px;--h2:14px;--h3:6px;height:14px;animation-delay:1.1s"></div>
+        <div class="wave-bar active animated" style="--h1:8px;--h2:6px;--h3:12px;height:6px;animation-delay:1.15s"></div>
+        <div class="wave-bar active animated" style="--h1:14px;--h2:12px;--h3:4px;height:10px;animation-delay:1.2s"></div>
+        <div class="wave-bar active animated" style="--h1:6px;--h2:16px;--h3:10px;height:12px;animation-delay:1.25s"></div>
+        <div class="wave-bar active animated" style="--h1:10px;--h2:8px;--h3:14px;height:8px;animation-delay:1.3s"></div>
+        <div class="wave-bar active animated" style="--h1:16px;--h2:4px;--h3:8px;height:14px;animation-delay:1.35s"></div>
+        <div class="wave-bar active animated" style="--h1:4px;--h2:12px;--h3:6px;height:10px;animation-delay:1.4s"></div>
+        <div class="wave-bar active animated" style="--h1:8px;--h2:14px;--h3:16px;height:6px;animation-delay:1.45s"></div>
+      </div>
+    </div>
+    <div class="prose">
+      <div class="dialogue you">
+        <div class="who">You</div>
+        <div class="words">I think we should revisit the timeline. The current one feels too aggressive for what we're trying to ship.</div>
+      </div>
+      <div class="dialogue them">
+        <div class="who">Them</div>
+        <div class="words">Agreed. Let me check with the team and get back to you by Friday with a revised estimate.</div>
+      </div>
+      <div class="dialogue you">
+        <div class="who">You</div>
+        <div class="words"><span class="volatile">That works, and also</span><span class="cursor"></span></div>
+      </div>
+    </div>
+    <div class="stop-area">
+      <button class="stop-btn">
+        <div class="stop-square"></div>
+      </button>
+    </div>
+  </div>
+  <div class="callout">
+    <div class="callout-text"><em>Purple glow</em> from window edges. Animated waveform ribbon. Transcript styled like dialogue — "Them" indented with a thin accent border. <em>Stop button pulses</em> with expanding ring.</div>
+  </div>
+</div>
+
+<!-- SAVED STATE -->
+<div class="col">
+  <div class="label">The Living Page — Saved</div>
+  <div class="sublabel">The page turns. Subtle perspective shift.</div>
+  <div class="page saved">
+    <div class="header">
+      <span class="header-title">TOME</span>
+    </div>
+    <div class="waveform-ribbon">
+      <div class="wave-container">
+        <div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div><div class="wave-bar idle" style="height:2px"></div>
+      </div>
+    </div>
+    <div class="prose">
+      <div class="dialogue you">
+        <div class="who">You</div>
+        <div class="words">I think we should revisit the timeline. The current one feels too aggressive for what we're trying to ship.</div>
+      </div>
+      <div class="dialogue them">
+        <div class="who">Them</div>
+        <div class="words">Agreed. Let me check with the team and get back to you by Friday with a revised estimate.</div>
+      </div>
+      <div class="dialogue you">
+        <div class="who">You</div>
+        <div class="words">That works. Let's also loop in Sarah on the budget side.</div>
+      </div>
+    </div>
+    <div class="saved-banner">
+      <div class="saved-check">✓</div>
+      <div class="saved-text">Saved to your vault</div>
+      <div class="saved-file">2026-03-27 Timeline Discussion.md</div>
+    </div>
+  </div>
+  <div class="callout">
+    <div class="callout-text">Window tilts with <em>subtle perspective shift</em> — like a page being turned and shelved. Waveform returns to flat line. Transcript remains readable.</div>
+  </div>
+</div>
+
+</body>
+</html>

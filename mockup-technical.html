@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tome - Technical & Dense Style Mockup</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #1a1a1a;
+    font-family: 'Inter', -apple-system, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 60px 40px;
+    min-height: 100vh;
+    gap: 80px;
+  }
+
+  .state-label {
+    font-family: 'JetBrains Mono', monospace;
+    color: #555;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  .state-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* --- Menu bar notch --- */
+  .menu-bar-notch {
+    width: 320px;
+    height: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+  .menu-bar-notch .notch {
+    width: 40px;
+    height: 4px;
+    background: #2a2a2c;
+    border-radius: 0 0 4px 4px;
+  }
+
+  /* --- Window --- */
+  .window {
+    width: 320px;
+    background: #0C0C0C;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #222224;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 0 0.5px rgba(255,255,255,0.05);
+  }
+
+  /* --- Top Bar --- */
+  .top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 10px;
+    background: #111113;
+    border-bottom: 1px solid #1e1e20;
+  }
+
+  .top-bar-left {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .app-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: #A78BFA;
+    letter-spacing: 2px;
+  }
+
+  .version-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    color: #444;
+    background: #1a1a1c;
+    padding: 1px 4px;
+    border-radius: 2px;
+    border: 1px solid #222;
+  }
+
+  .top-bar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #333;
+  }
+
+  .status-dot.recording {
+    background: #ef4444;
+    animation: pulse-dot 1.5s ease-in-out infinite;
+    box-shadow: 0 0 6px rgba(239, 68, 68, 0.5);
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  .elapsed-time {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    color: #ef4444;
+    letter-spacing: 1px;
+  }
+
+  .shortcut-hint {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: #3a3a3c;
+    background: #161618;
+    padding: 1px 4px;
+    border-radius: 3px;
+    border: 1px solid #222224;
+  }
+
+  .top-settings {
+    color: #3a3a3c;
+    cursor: pointer;
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* --- Audio Level Bar --- */
+  .audio-level-bar {
+    height: 2px;
+    background: #161618;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .audio-level-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: linear-gradient(90deg, #A78BFA 0%, #7c3aed 100%);
+    border-radius: 0 1px 1px 0;
+    transition: width 0.15s ease;
+  }
+
+  .audio-level-fill.active {
+    animation: audio-bounce 0.8s ease-in-out infinite alternate;
+  }
+
+  @keyframes audio-bounce {
+    0% { width: 15%; }
+    25% { width: 55%; }
+    50% { width: 35%; }
+    75% { width: 70%; }
+    100% { width: 45%; }
+  }
+
+  /* --- Metadata Strip --- */
+  .meta-strip {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 10px;
+    background: #0e0e10;
+    border-bottom: 1px solid #1a1a1c;
+  }
+
+  .meta-item {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: #3a3a3c;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+
+  .meta-value {
+    color: #555;
+  }
+
+  /* --- Transcript Area --- */
+  .transcript-area {
+    padding: 6px 0;
+    max-height: 340px;
+    overflow-y: auto;
+  }
+
+  .transcript-line {
+    display: flex;
+    align-items: flex-start;
+    padding: 4px 10px;
+    gap: 0;
+    transition: background 0.1s;
+  }
+
+  .transcript-line:hover {
+    background: #161618;
+  }
+
+  .line-timestamp {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: #2e2e30;
+    min-width: 52px;
+    padding-top: 1px;
+    flex-shrink: 0;
+  }
+
+  .line-speaker {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    min-width: 18px;
+    flex-shrink: 0;
+    padding-top: 1px;
+  }
+
+  .line-speaker.you { color: #A78BFA; }
+  .line-speaker.them { color: #38bdf8; }
+
+  .line-text {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    color: #b0b0b4;
+    line-height: 1.45;
+    flex: 1;
+  }
+
+  .line-text .highlight {
+    background: rgba(167, 139, 250, 0.12);
+    border-radius: 2px;
+    padding: 0 1px;
+  }
+
+  .live-cursor {
+    display: inline-block;
+    width: 1.5px;
+    height: 13px;
+    background: #A78BFA;
+    margin-left: 2px;
+    vertical-align: text-bottom;
+    animation: blink-cursor 1s step-end infinite;
+  }
+
+  @keyframes blink-cursor {
+    50% { opacity: 0; }
+  }
+
+  .transcript-divider {
+    border: none;
+    border-top: 1px solid #1a1a1c;
+    margin: 4px 10px;
+  }
+
+  /* --- Empty State --- */
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    text-align: center;
+  }
+
+  .empty-icon {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 20px;
+    color: #222224;
+    margin-bottom: 12px;
+  }
+
+  .empty-text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: #333;
+    line-height: 1.6;
+  }
+
+  .empty-text .cmd {
+    color: #555;
+    background: #161618;
+    padding: 1px 4px;
+    border-radius: 2px;
+    border: 1px solid #222224;
+  }
+
+  /* --- Control Bar --- */
+  .control-bar {
+    padding: 8px 10px;
+    background: #111113;
+    border-top: 1px solid #1e1e20;
+    display: flex;
+    gap: 6px;
+  }
+
+  .ctrl-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 7px 8px;
+    border-radius: 5px;
+    border: 1px solid #222224;
+    background: #161618;
+    cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+  }
+
+  .ctrl-btn:hover {
+    background: #1e1e20;
+    border-color: #2a2a2c;
+  }
+
+  .ctrl-btn .btn-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    color: #888;
+  }
+
+  .ctrl-btn .btn-shortcut {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    color: #333;
+    background: #0e0e10;
+    padding: 1px 4px;
+    border-radius: 2px;
+    border: 1px solid #1e1e20;
+    position: absolute;
+    right: 6px;
+  }
+
+  .ctrl-btn .btn-icon {
+    font-size: 10px;
+  }
+
+  .ctrl-btn.accent {
+    border-color: rgba(167, 139, 250, 0.25);
+    background: rgba(167, 139, 250, 0.06);
+  }
+
+  .ctrl-btn.accent .btn-label {
+    color: #A78BFA;
+  }
+
+  .ctrl-btn.stop {
+    background: rgba(239, 68, 68, 0.08);
+    border-color: rgba(239, 68, 68, 0.2);
+  }
+
+  .ctrl-btn.stop .btn-label {
+    color: #ef4444;
+    font-weight: 600;
+  }
+
+  .ctrl-btn.stop .btn-icon {
+    color: #ef4444;
+  }
+
+  /* --- Footer --- */
+  .footer-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 10px;
+    background: #0a0a0c;
+    border-top: 1px solid #161618;
+  }
+
+  .footer-item {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    color: #2a2a2c;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+
+  .footer-item .key {
+    color: #333;
+    background: #131315;
+    padding: 0 3px;
+    border-radius: 2px;
+    border: 1px solid #1e1e20;
+  }
+</style>
+</head>
+<body>
+
+<!-- ==================== IDLE STATE ==================== -->
+<div class="state-wrapper">
+  <div class="state-label">Idle</div>
+  <div class="menu-bar-notch"><div class="notch"></div></div>
+  <div class="window">
+    <!-- Top Bar -->
+    <div class="top-bar">
+      <div class="top-bar-left">
+        <span class="app-title">TOME</span>
+        <span class="version-tag">v0.1</span>
+      </div>
+      <div class="top-bar-right">
+        <span class="status-dot"></span>
+        <span class="shortcut-hint">,</span>
+        <span class="top-settings">...</span>
+      </div>
+    </div>
+
+    <!-- Audio Level -->
+    <div class="audio-level-bar">
+      <div class="audio-level-fill" style="width: 0%;"></div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state">
+      <div class="empty-icon">&gt;_</div>
+      <div class="empty-text">
+        No active session<br><br>
+        <span class="cmd">&#8984;&#8679;C</span> Call Capture<br>
+        <span class="cmd">&#8984;&#8679;V</span> Voice Memo
+      </div>
+    </div>
+
+    <!-- Control Bar -->
+    <div class="control-bar">
+      <div class="ctrl-btn accent">
+        <span class="btn-icon">&#9679;</span>
+        <span class="btn-label">Call Capture</span>
+        <span class="btn-shortcut">&#8984;&#8679;C</span>
+      </div>
+      <div class="ctrl-btn">
+        <span class="btn-icon">&#9679;</span>
+        <span class="btn-label">Voice Memo</span>
+        <span class="btn-shortcut">&#8984;&#8679;V</span>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer-bar">
+      <span class="footer-item"><span class="key">&#8984;&#8679;T</span> toggle</span>
+      <span class="footer-item">0 sessions</span>
+      <span class="footer-item"><span class="key">?</span> help</span>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== RECORDING STATE ==================== -->
+<div class="state-wrapper">
+  <div class="state-label">Recording</div>
+  <div class="menu-bar-notch"><div class="notch"></div></div>
+  <div class="window">
+    <!-- Top Bar -->
+    <div class="top-bar">
+      <div class="top-bar-left">
+        <span class="app-title">TOME</span>
+        <span class="elapsed-time">02:34</span>
+      </div>
+      <div class="top-bar-right">
+        <span class="status-dot recording"></span>
+        <span class="shortcut-hint">REC</span>
+      </div>
+    </div>
+
+    <!-- Audio Level -->
+    <div class="audio-level-bar">
+      <div class="audio-level-fill active" style="width: 45%;"></div>
+    </div>
+
+    <!-- Meta Strip -->
+    <div class="meta-strip">
+      <span class="meta-item">mode: <span class="meta-value">call</span></span>
+      <span class="meta-item">seg: <span class="meta-value">6</span></span>
+      <span class="meta-item">words: <span class="meta-value">87</span></span>
+      <span class="meta-item">spk: <span class="meta-value">2</span></span>
+    </div>
+
+    <!-- Transcript Area -->
+    <div class="transcript-area">
+      <div class="transcript-line">
+        <span class="line-timestamp">00:00:03</span>
+        <span class="line-speaker you">Y:</span>
+        <span class="line-text">Hey, thanks for jumping on this. I wanted to walk through the architecture changes before we submit the RFC.</span>
+      </div>
+
+      <div class="transcript-line">
+        <span class="line-timestamp">00:00:11</span>
+        <span class="line-speaker them">T:</span>
+        <span class="line-text">Sure, I reviewed the doc last night. The migration path looks solid but I have concerns about the <span class="highlight">connection pooling</span> layer.</span>
+      </div>
+
+      <hr class="transcript-divider">
+
+      <div class="transcript-line">
+        <span class="line-timestamp">00:00:24</span>
+        <span class="line-speaker you">Y:</span>
+        <span class="line-text">Right, so the pool manager currently caps at 50 connections per node. We could shard by tenant ID instead.</span>
+      </div>
+
+      <div class="transcript-line">
+        <span class="line-timestamp">00:00:38</span>
+        <span class="line-speaker them">T:</span>
+        <span class="line-text">That would work. What about the failover scenario though? If a node goes down mid-transaction we need graceful reconnect.</span>
+      </div>
+
+      <div class="transcript-line">
+        <span class="line-timestamp">00:01:05</span>
+        <span class="line-speaker you">Y:</span>
+        <span class="line-text">We handle that with exponential backoff and a circuit breaker pattern. I can share the implementation.</span>
+      </div>
+
+      <div class="transcript-line">
+        <span class="line-timestamp">00:02:30</span>
+        <span class="line-speaker them">T:</span>
+        <span class="line-text">Okay, let me also check the latency numbers from the load test and I'll get back to<span class="live-cursor"></span></span>
+      </div>
+    </div>
+
+    <!-- Control Bar -->
+    <div class="control-bar">
+      <div class="ctrl-btn stop">
+        <span class="btn-icon">&#9632;</span>
+        <span class="btn-label">Stop Recording</span>
+        <span class="btn-shortcut">&#8984;&#8679;S</span>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer-bar">
+      <span class="footer-item"><span class="key">&#8984;&#8679;P</span> pause</span>
+      <span class="footer-item">02:34 elapsed</span>
+      <span class="footer-item"><span class="key">&#8984;&#8679;M</span> mark</span>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
