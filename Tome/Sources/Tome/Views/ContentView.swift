@@ -73,6 +73,7 @@ struct ContentView: View {
                 activeSessionType: activeSessionType,
                 audioLevel: audioLevel,
                 detectedApp: detectedAppName,
+                silenceSeconds: silenceSeconds,
                 statusMessage: transcriptionEngine?.assetStatus,
                 errorMessage: transcriptionEngine?.lastError,
                 onStartCallCapture: { startSession(type: .callCapture) },
@@ -165,9 +166,7 @@ struct ContentView: View {
             Spacer()
 
             if isRunning {
-                Circle()
-                    .fill(.red)
-                    .frame(width: 6, height: 6)
+                PulsingDot(size: 6)
             }
         }
         .padding(.horizontal, 16)
@@ -255,19 +254,20 @@ struct ContentView: View {
 
             // Run post-session diarization only for call captures
             if wasCallCapture {
+                transcriptionEngine?.assetStatus = "Identifying speakers..."
                 if let segments = await transcriptionEngine?.runPostSessionDiarization() {
+                    transcriptionEngine?.assetStatus = "Rewriting transcript..."
                     await transcriptLogger.rewriteWithDiarization(segments: segments)
                 }
             }
 
             // Finalize frontmatter AFTER diarization (duration, speakers, rename)
+            transcriptionEngine?.assetStatus = "Finalizing..."
             let savedPath = await transcriptLogger.finalizeFrontmatter()
-            print("[TOME-DEBUG] finalizeFrontmatter returned: \(String(describing: savedPath))")
-            print("[TOME-DEBUG] activeSessionType: \(String(describing: activeSessionType))")
+            transcriptionEngine?.assetStatus = "Ready"
 
             // Only show banner if not already in a new session
             if activeSessionType == nil, let savedPath {
-                print("[TOME-DEBUG] Showing save banner for: \(savedPath.lastPathComponent)")
                 savedFileURL = savedPath
                 bannerDismissTask?.cancel()
                 bannerDismissTask = Task {

@@ -1,10 +1,24 @@
 import SwiftUI
 
+struct PulsingDot: View {
+    var size: CGFloat = 10
+    @State private var pulse = false
+    var body: some View {
+        Circle()
+            .fill(.red)
+            .frame(width: size, height: size)
+            .opacity(pulse ? 1.0 : 0.4)
+            .animation(.easeInOut(duration: 0.8).repeatForever(autoreverses: true), value: pulse)
+            .onAppear { pulse = true }
+    }
+}
+
 struct ControlBar: View {
     let isRecording: Bool
     let activeSessionType: SessionType?
     let audioLevel: Float
     let detectedApp: String?
+    let silenceSeconds: Int
     let statusMessage: String?
     let errorMessage: String?
     let onStartCallCapture: () -> Void
@@ -39,10 +53,7 @@ struct ControlBar: View {
             if isRecording {
                 Button(action: onStop) {
                     HStack(spacing: 10) {
-                        // Solid red dot
-                        Circle()
-                            .fill(.red)
-                            .frame(width: 10, height: 10)
+                        PulsingDot()
 
                         Text(activeSessionLabel)
                             .font(.system(size: 13, weight: .medium))
@@ -60,8 +71,18 @@ struct ControlBar: View {
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                 }
                 .buttonStyle(.plain)
+                .keyboardShortcut(".", modifiers: .command)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 10)
+
+                if silenceSeconds >= 90 {
+                    Text("Silence — auto-stop in \(120 - silenceSeconds)s")
+                        .font(.system(size: 10))
+                        .foregroundStyle(.orange)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal, 16)
+                        .padding(.bottom, 4)
+                }
             } else {
                 HStack(spacing: 10) {
                     Button(action: onStartCallCapture) {
@@ -72,6 +93,9 @@ struct ControlBar: View {
                             Text("Call Capture")
                                 .font(.system(size: 11, weight: .medium))
                                 .foregroundStyle(Color.fg2)
+                            Text("⌘R")
+                                .font(.system(size: 9))
+                                .foregroundStyle(Color.fg3)
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 18)
@@ -79,6 +103,7 @@ struct ControlBar: View {
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
                     .buttonStyle(.plain)
+                    .keyboardShortcut("r", modifiers: .command)
 
                     Button(action: onStartVoiceMemo) {
                         VStack(spacing: 8) {
@@ -88,6 +113,9 @@ struct ControlBar: View {
                             Text("Voice Memo")
                                 .font(.system(size: 11, weight: .medium))
                                 .foregroundStyle(Color.fg2)
+                            Text("⌘⇧R")
+                                .font(.system(size: 9))
+                                .foregroundStyle(Color.fg3)
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 18)
@@ -95,6 +123,7 @@ struct ControlBar: View {
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
                     .buttonStyle(.plain)
+                    .keyboardShortcut("r", modifiers: [.command, .shift])
                 }
                 .padding(.horizontal, 12)
                 .padding(.vertical, 10)

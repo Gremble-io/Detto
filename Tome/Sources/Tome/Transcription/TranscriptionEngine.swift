@@ -24,7 +24,7 @@ func diagLog(_ msg: String) {
 @MainActor
 final class TranscriptionEngine {
     private(set) var isRunning = false
-    private(set) var assetStatus: String = "Ready"
+    var assetStatus: String = "Ready"
     var lastError: String?
 
     private let systemCapture = SystemAudioCapture()
