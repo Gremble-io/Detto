@@ -61,11 +61,6 @@ struct SettingsView: View {
                 .font(.system(size: 12))
             }
 
-            Section("Transcription") {
-                TextField("Locale (e.g. en-US)", text: $settings.transcriptionLocale)
-                    .font(.system(size: 12, design: .monospaced))
-            }
-
             Section("Privacy") {
                 Toggle("Hide from screen sharing", isOn: $settings.hideFromScreenShare)
                     .font(.system(size: 12))

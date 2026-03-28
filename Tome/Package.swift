@@ -6,7 +6,7 @@ let package = Package(
     name: "Tome",
     platforms: [.macOS(.v26)],
     dependencies: [
-        .package(url: "https://github.com/FluidInference/FluidAudio.git", from: "0.7.9"),
+        .package(url: "https://github.com/FluidInference/FluidAudio.git", "0.12.1"..<"0.12.2"),
         .package(url: "https://github.com/sparkle-project/Sparkle", from: "2.7.0"),
     ],
     targets: [

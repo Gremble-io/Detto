@@ -66,10 +66,10 @@ final class TranscriptionEngine {
         isRunning = true
 
         // 1. Load FluidAudio models
-        assetStatus = "Loading ASR model (~600MB first run)..."
+        assetStatus = "Downloading multilingual model (first run)..."
         diagLog("[ENGINE-1] loading FluidAudio ASR models...")
         do {
-            let models = try await AsrModels.downloadAndLoad(version: .v2)
+            let models = try await AsrModels.downloadAndLoad(version: .v3)
             assetStatus = "Initializing ASR..."
             let asr = AsrManager(config: .default)
             try await asr.initialize(models: models)
@@ -168,7 +168,7 @@ final class TranscriptionEngine {
             }
         }
 
-        assetStatus = "Transcribing (Parakeet-TDT v2)"
+        assetStatus = "Transcribing (Parakeet-TDT v3)"
         diagLog("[ENGINE-6] all transcription tasks started")
 
         // Install CoreAudio listener for default input device changes

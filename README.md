@@ -13,7 +13,7 @@
 
 ---
 
-Tome is a macOS app that captures meetings and voice memos, transcribes them locally with Parakeet-TDT v2, and drops structured `.md` files straight into your Obsidian vault. Everything runs on-device. Nothing phones home.
+Tome is a macOS app that captures meetings and voice memos, transcribes them locally with Parakeet-TDT v3, and drops structured `.md` files straight into your Obsidian vault. Everything runs on-device. Nothing phones home.
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/Gremble-io/Tome/main/assets/screenshot-idle.png" width="350" alt="Tome — idle state" />
@@ -39,7 +39,7 @@ I'm putting it out there because if you're running Obsidian with any kind of AI 
 
 - **Plain markdown out.** YAML frontmatter, tags, timestamps. Your vault already knows what to do with it. No proprietary export, no copy-paste, no middleman.
 - **Built for the agent pipeline.** Tome is just the capture layer. You talk, it transcribes, your agent picks up the `.md` and does whatever you've wired it to do.
-- **Runs on your machine.** Parakeet-TDT v2 on Apple Silicon. No API keys, no accounts, no subscriptions, no data leaving the building.
+- **Runs on your machine.** Parakeet-TDT v3 on Apple Silicon. No API keys, no accounts, no subscriptions, no data leaving the building.
 
 ```
 speak → capture → vault → agent → knowledge base
@@ -49,7 +49,7 @@ Tome does the first three. Your agent does the rest.
 
 ## Features
 
-- **Local transcription** via Parakeet-TDT v2 ([FluidAudio](https://github.com/FluidInference/FluidAudio)) on Apple Silicon. Nothing hits the network.
+- **Multilingual transcription** via Parakeet-TDT v3 ([FluidAudio](https://github.com/FluidInference/FluidAudio)) on Apple Silicon. 25 European languages, auto-detected. Nothing hits the network.
 - **Call Capture** grabs mic + system audio. Detects which conferencing app you're in (Teams, Zoom, Slack, etc.) and filters audio to just that app. Your Spotify and notification sounds stay out of the transcript.
 - **Voice Memo** is mic only. For quick thoughts, verbal notes, stream of consciousness. Saves to a separate folder so it doesn't clutter your meeting transcripts.
 - **Speaker diarization** runs after the call ends. pyannote splits the remote audio into Speaker 2, Speaker 3, Speaker 4. Not perfect, but way better than one wall of unattributed text.
@@ -65,7 +65,7 @@ Tome does the first three. Your agent does the rest.
 └─────────────┘     │  Tome            │     │  Obsidian     │
                     │  ┌────────────┐  │────▶│  Vault        │
 ┌─────────────┐     │  │ Parakeet   │  │     │  (.md files)  │
-│  System      │────▶│  │ TDT v2    │  │     │               │
+│  System      │────▶│  │ TDT v3    │  │     │               │
 │  Audio       │     │  └────────────┘  │     └───────┬───────┘
 └─────────────┘     └──────────────────┘             │
                                                      ▼
