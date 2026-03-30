@@ -128,7 +128,9 @@ if [[ -n "${CODESIGN_IDENTITY:-}" ]]; then
   echo "Code signing complete"
   codesign -vvv "$APP_DIR"
 else
-  echo "Warning: No signing identity found. App will be unsigned."
+  echo "Error: No signing identity found. App will be unsigned."
+  echo "Set CODESIGN_IDENTITY or install a Developer ID certificate."
+  exit 1
 fi
 
 # Install to /Applications

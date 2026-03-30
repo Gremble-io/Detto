@@ -189,6 +189,20 @@ Tome/Sources/Tome/
 - **Diarization is imperfect.** Works well with headset mics. Laptop speakers with crosstalk will give you worse speaker separation.
 - **No live speaker labels.** Diarization runs after the session ends. During the call, remote audio shows as a single stream.
 
+## Troubleshooting
+
+**"Tome is damaged and can't be opened"**
+
+This is macOS Gatekeeper blocking an unsigned app. Until a signed release is available:
+
+1. Right-click (or Control-click) `Tome.app` in `/Applications`
+2. Click **Open**
+3. In the dialog, click **Open** again
+
+You only need to do this once — after that, Tome launches normally.
+
+Alternatively, build from source (see [Build](#build) above) to avoid Gatekeeper entirely.
+
 ## Credits
 
 Started from [OpenGranola](https://github.com/yazinsai/OpenGranola). Substantially rewritten from there.

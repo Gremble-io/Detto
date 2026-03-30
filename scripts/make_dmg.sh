@@ -73,7 +73,7 @@ fi
 
 if [[ -n "${CODESIGN_IDENTITY:-}" ]]; then
   echo "Signing DMG with: $CODESIGN_IDENTITY"
-  codesign --force --sign "$CODESIGN_IDENTITY" "$DMG_PATH"
+  codesign --force --options runtime --timestamp --sign "$CODESIGN_IDENTITY" "$DMG_PATH"
 fi
 
 echo "DMG created: $DMG_PATH"
