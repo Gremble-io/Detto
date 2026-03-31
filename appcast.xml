@@ -6,14 +6,14 @@
     <description>Most recent updates to Tome</description>
     <language>en</language>
     <item>
-      <title>Version 1.2.1</title>
-      <pubDate>Mon, 30 Mar 2026 22:16:25 +0000</pubDate>
-      <sparkle:version>1.2.1</sparkle:version>
-      <sparkle:shortVersionString>1.2.1</sparkle:shortVersionString>
+      <title>Version 1.2.2</title>
+      <pubDate>Tue, 31 Mar 2026 20:05:27 +0000</pubDate>
+      <sparkle:version>1.2.2</sparkle:version>
+      <sparkle:shortVersionString>1.2.2</sparkle:shortVersionString>
       <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
-      <enclosure url="https://github.com/Gremble-io/Tome/releases/download/v1.2.1/Tome.dmg"
-       sparkle:edSignature="hi9ct4iU4nPpAkiSvmQZkmwU5/aPrcN53mBfbfezoIZ1UDORgV/dZztgx0bfwb3C/r5FgaPOBcK/D5lEap6JAg=="
-       length="5484275"
+      <enclosure url="https://github.com/Gremble-io/Tome/releases/download/1.2.2/Tome.dmg"
+       sparkle:edSignature="wCO/19SvHi9PGt5thD7atzyx0zrYm+EXXQFJfesEbyy1aPiyXjiOOLL80/eMDH1pI8mqakvL+6zRI6/X5LMVCg=="
+       length="5487661"
        type="application/octet-stream" />
     </item>
   </channel>
