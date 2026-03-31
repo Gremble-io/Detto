@@ -147,6 +147,7 @@ final class TranscriptionEngine {
                 vadManager: vadManager,
                 speaker: .them,
                 audioSource: .system,
+                vadConfig: VadConfig(defaultThreshold: 0.92),
                 onPartial: { text in
                     Task { @MainActor in store.volatileThemText = text }
                 },
