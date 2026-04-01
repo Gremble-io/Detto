@@ -19,5 +19,10 @@ let package = Package(
             path: "Sources/Tome",
             exclude: ["Info.plist", "Tome.entitlements", "Assets"]
         ),
+        .testTarget(
+            name: "TomeTests",
+            dependencies: ["Tome"],
+            path: "Tests/TomeTests"
+        ),
     ]
 )
