@@ -31,6 +31,9 @@ struct ContentView: View {
     @State private var savedFileURL: URL?
     @State private var bannerDismissTask: Task<Void, Never>?
     @State private var sessionElapsed: Int = 0
+    @State private var showSpeakerNaming = false
+    @State private var speakerLabelsForNaming: [String] = []
+    @State private var speakerNamingContinuation: CheckedContinuation<[String: String], Never>?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -79,6 +82,24 @@ struct ContentView: View {
             if showOnboarding {
                 OnboardingView(isPresented: $showOnboarding)
                     .transition(.opacity)
+            }
+        }
+        .overlay {
+            if showSpeakerNaming {
+                SpeakerNamingView(
+                    speakerLabels: speakerLabelsForNaming,
+                    onApply: { mapping in
+                        showSpeakerNaming = false
+                        speakerNamingContinuation?.resume(returning: mapping)
+                        speakerNamingContinuation = nil
+                    },
+                    onSkip: {
+                        showSpeakerNaming = false
+                        speakerNamingContinuation?.resume(returning: [:])
+                        speakerNamingContinuation = nil
+                    }
+                )
+                .transition(.opacity)
             }
         }
         .onChange(of: showOnboarding) {
@@ -328,7 +349,25 @@ struct ContentView: View {
                 transcriptionEngine?.assetStatus = "Identifying speakers..."
                 if let segments = await transcriptionEngine?.runPostSessionDiarization() {
                     transcriptionEngine?.assetStatus = "Rewriting transcript..."
-                    await transcriptLogger.rewriteWithDiarization(segments: segments)
+                    let speakerMap = await transcriptLogger.rewriteWithDiarization(segments: segments)
+
+                    let genericLabels = Set(speakerMap.values).sorted()
+                    if !genericLabels.isEmpty {
+                        transcriptionEngine?.assetStatus = "Ready"
+
+                        let mapping: [String: String] = await withCheckedContinuation { continuation in
+                            speakerLabelsForNaming = genericLabels
+                            speakerNamingContinuation = continuation
+                            withAnimation(.easeInOut(duration: 0.25)) {
+                                showSpeakerNaming = true
+                            }
+                        }
+
+                        if !mapping.isEmpty {
+                            transcriptionEngine?.assetStatus = "Applying names..."
+                            await transcriptLogger.applySpeakerRenames(mapping)
+                        }
+                    }
                 }
             }
 

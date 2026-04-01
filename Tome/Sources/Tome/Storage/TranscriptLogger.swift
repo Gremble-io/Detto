@@ -299,9 +299,11 @@ tags:
 
     /// Rewrite the transcript file, replacing "Them" labels with diarized speaker IDs.
     /// Segments are (speakerId, startTimeSeconds, endTimeSeconds) from the offline diarizer.
-    func rewriteWithDiarization(segments: [(speakerId: String, startTime: Float, endTime: Float)]) {
-        guard let filePath = currentFilePath ?? lastSessionFilePath else { return }
-        guard var content = try? String(contentsOf: filePath, encoding: .utf8) else { return }
+    /// Returns the speaker map (raw diarization ID → friendly label like "Speaker 2").
+    @discardableResult
+    func rewriteWithDiarization(segments: [(speakerId: String, startTime: Float, endTime: Float)]) -> [String: String] {
+        guard let filePath = currentFilePath ?? lastSessionFilePath else { return [:] }
+        guard var content = try? String(contentsOf: filePath, encoding: .utf8) else { return [:] }
 
         // Build a map of unique diarization speaker IDs → friendly labels (Speaker 2, 3, etc.)
         var diarSpeakerMap: [String: String] = [:]
@@ -319,7 +321,7 @@ tags:
 
         // For each "**Them** (HH:mm:ss)" line, find the best matching diarization segment
         let pattern = #"\*\*Them\*\* \((\d{2}:\d{2}:\d{2})\)"#
-        guard let regex = try? NSRegularExpression(pattern: pattern) else { return }
+        guard let regex = try? NSRegularExpression(pattern: pattern) else { return diarSpeakerMap }
 
         let nsContent = content as NSString
         let matches = regex.matches(in: content, range: NSRange(location: 0, length: nsContent.length))
@@ -379,6 +381,31 @@ tags:
 
         // Atomic write
         let tmpPath = filePath.deletingLastPathComponent().appendingPathComponent(".tome_diar_tmp.md")
+        try? content.write(to: tmpPath, atomically: true, encoding: .utf8)
+        try? FileManager.default.removeItem(at: filePath)
+        try? FileManager.default.moveItem(at: tmpPath, to: filePath)
+
+        return diarSpeakerMap
+    }
+
+    /// Replace generic speaker labels (e.g. "Speaker 2") with real names in the transcript.
+    /// mapping: ["Speaker 2": "Alice", "Speaker 3": "Bob"]
+    func applySpeakerRenames(_ mapping: [String: String]) {
+        guard !mapping.isEmpty else { return }
+        guard let filePath = lastSessionFilePath else { return }
+        guard var content = try? String(contentsOf: filePath, encoding: .utf8) else { return }
+
+        for (generic, realName) in mapping {
+            content = content.replacingOccurrences(of: "**\(generic)**", with: "**\(realName)**")
+        }
+
+        // Update speaker tracking so finalizeFrontmatter writes correct attendees
+        for (generic, realName) in mapping {
+            lastSpeakersDetected.remove(generic)
+            lastSpeakersDetected.insert(realName)
+        }
+
+        let tmpPath = filePath.deletingLastPathComponent().appendingPathComponent(".tome_rename_tmp.md")
         try? content.write(to: tmpPath, atomically: true, encoding: .utf8)
         try? FileManager.default.removeItem(at: filePath)
         try? FileManager.default.moveItem(at: tmpPath, to: filePath)
