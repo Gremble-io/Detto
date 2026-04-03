@@ -159,7 +159,7 @@ jobs:
                 <enclosure url="${DMG_URL}"
                            sparkle:edSignature="${ED_SIGNATURE}"
                            length="${DMG_LENGTH}"
-                           type="application/octet-stream" />
+                           type="application/x-apple-diskimage" />
               </item>
             </channel>
           </rss>
