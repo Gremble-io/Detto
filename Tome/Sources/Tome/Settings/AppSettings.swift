@@ -28,6 +28,11 @@ final class AppSettings {
         didSet { UserDefaults.standard.set(vaultVoicePath, forKey: "vaultVoicePath") }
     }
 
+    /// When true, automatically starts transcription when a conferencing app uses the mic.
+    var autoStartEnabled: Bool {
+        didSet { UserDefaults.standard.set(autoStartEnabled, forKey: "autoStartEnabled") }
+    }
+
     /// When true, all app windows are invisible to screen sharing / recording.
     var hideFromScreenShare: Bool {
         didSet {
@@ -42,6 +47,7 @@ final class AppSettings {
         self.inputDeviceID = AudioDeviceID(defaults.integer(forKey: "inputDeviceID"))
         self.vaultMeetingsPath = defaults.string(forKey: "vaultMeetingsPath") ?? NSString("~/Documents/Tome/Meetings").expandingTildeInPath
         self.vaultVoicePath = defaults.string(forKey: "vaultVoicePath") ?? NSString("~/Documents/Tome/Voice").expandingTildeInPath
+        self.autoStartEnabled = defaults.bool(forKey: "autoStartEnabled")
         // Default to true (hidden) if key has never been set
         if defaults.object(forKey: "hideFromScreenShare") == nil {
             self.hideFromScreenShare = true

@@ -61,6 +61,14 @@ struct SettingsView: View {
                 .font(.system(size: 12))
             }
 
+            Section("Automation") {
+                Toggle("Auto-start on meeting", isOn: $settings.autoStartEnabled)
+                    .font(.system(size: 12))
+                Text("Automatically starts transcription when a conferencing app (Teams, Zoom, etc.) uses the microphone, and stops when the call ends.")
+                    .font(.system(size: 11))
+                    .foregroundStyle(.secondary)
+            }
+
             Section("Privacy") {
                 Toggle("Hide from screen sharing", isOn: $settings.hideFromScreenShare)
                     .font(.system(size: 12))
@@ -78,7 +86,7 @@ struct SettingsView: View {
             }
         }
         .formStyle(.grouped)
-        .frame(width: 450, height: 420)
+        .frame(width: 450, height: 500)
         .onAppear {
             inputDevices = MicCapture.availableInputDevices()
         }

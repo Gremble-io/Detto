@@ -31,6 +31,7 @@ struct ContentView: View {
     @State private var savedFileURL: URL?
     @State private var bannerDismissTask: Task<Void, Never>?
     @State private var sessionElapsed: Int = 0
+    @State private var meetingDetector = MeetingDetector()
 
     var body: some View {
         VStack(spacing: 0) {
@@ -135,6 +136,20 @@ struct ContentView: View {
             while !Task.isCancelled {
                 try? await Task.sleep(for: .seconds(10))
                 await transcriptLogger.flushIfNeeded()
+            }
+        }
+        // Auto-start meeting detection
+        .task {
+            setupMeetingDetector()
+            if settings.autoStartEnabled {
+                meetingDetector.install()
+            }
+        }
+        .onChange(of: settings.autoStartEnabled) {
+            if settings.autoStartEnabled {
+                meetingDetector.install()
+            } else {
+                meetingDetector.uninstall()
             }
         }
         .onChange(of: settings.inputDeviceID) {
@@ -248,6 +263,53 @@ struct ContentView: View {
 
     private func formatTime(_ s: Int) -> String {
         "\(s / 60):\(String(format: "%02d", s % 60))"
+    }
+
+    // MARK: - Meeting Detection
+
+    private func setupMeetingDetector() {
+        meetingDetector.onMeetingStarted = { bundleID, appName in
+            guard !isRunning else { return }
+            diagLog("[AUTO-START] starting session for \(appName)")
+            startSession(appBundleID: bundleID, appName: appName)
+        }
+        meetingDetector.onMeetingStopped = {
+            guard isRunning, activeSessionType == .callCapture else { return }
+            diagLog("[AUTO-STOP] stopping session")
+            stopSession()
+        }
+    }
+
+    /// Auto-start variant: called by MeetingDetector with a known conferencing app.
+    private func startSession(appBundleID: String, appName: String) {
+        transcriptStore.clear()
+        silenceSeconds = 0
+        sessionElapsed = 0
+        savedFileURL = nil
+        bannerDismissTask?.cancel()
+
+        Task {
+            transcriptionEngine?.lastError = nil
+            await sessionStore.startSession()
+            do {
+                try await transcriptLogger.startSession(
+                    sourceApp: appName,
+                    vaultPath: settings.vaultMeetingsPath,
+                    sessionType: .callCapture
+                )
+            } catch {
+                await sessionStore.endSession()
+                transcriptionEngine?.lastError = error.localizedDescription
+                return
+            }
+            activeSessionType = .callCapture
+            detectedAppName = appName
+            await transcriptionEngine?.start(
+                locale: settings.locale,
+                inputDeviceID: settings.inputDeviceID,
+                appBundleID: appBundleID
+            )
+        }
     }
 
     // MARK: - Actions
