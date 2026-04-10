@@ -38,7 +38,7 @@ final class MicCapture: @unchecked Sendable {
             }
 
             let inputNode = self.engine.inputNode
-            let format = inputNode.outputFormat(forBus: 0)
+            let format = inputNode.inputFormat(forBus: 0)
 
             diagLog("[MIC-3] inputNode format: sr=\(format.sampleRate) ch=\(format.channelCount) interleaved=\(format.isInterleaved) commonFormat=\(format.commonFormat.rawValue)")
 
