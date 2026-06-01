@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <channel>
-    <title>Tome Updates</title>
-    <link>https://raw.githubusercontent.com/Gremble-io/Tome/gh-pages/appcast.xml</link>
-    <description>Most recent updates to Tome</description>
+    <title>Detto Updates</title>
+    <link>https://raw.githubusercontent.com/Gremble-io/detto/gh-pages/appcast.xml</link>
+    <description>Most recent updates to Detto</description>
     <language>en</language>
     <item>
-      <title>Version 1.2.2</title>
-      <pubDate>Tue, 31 Mar 2026 20:05:27 +0000</pubDate>
-      <sparkle:version>1.2.2</sparkle:version>
-      <sparkle:shortVersionString>1.2.2</sparkle:shortVersionString>
+      <title>Version 2.0.0</title>
+      <pubDate>Mon, 01 Jun 2026 23:05:46 +0000</pubDate>
+      <sparkle:version>2.0.0</sparkle:version>
+      <sparkle:shortVersionString>2.0.0</sparkle:shortVersionString>
       <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
-      <enclosure url="https://github.com/Gremble-io/Tome/releases/download/1.2.2/Tome.dmg"
-       sparkle:edSignature="wCO/19SvHi9PGt5thD7atzyx0zrYm+EXXQFJfesEbyy1aPiyXjiOOLL80/eMDH1pI8mqakvL+6zRI6/X5LMVCg=="
-       length="5487661"
-       type="application/octet-stream" />
+      <enclosure url="https://github.com/Gremble-io/detto/releases/download/v2.0.0/Detto.dmg"
+       sparkle:edSignature="Y+0/I8xDt3KujkQIKVzfYC6UXDQiikGTfYv0QVo+oAWUSPwAQBOTZBT8X2U05PJdemAOEzllzmT8Phgk7c0hCA=="
+       length="14258066"
+       type="application/x-apple-diskimage" />
     </item>
   </channel>
 </rss>
