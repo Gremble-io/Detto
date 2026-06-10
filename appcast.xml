@@ -6,14 +6,14 @@
     <description>Most recent updates to Detto</description>
     <language>en</language>
     <item>
-      <title>Version 2.0.2</title>
-      <pubDate>Tue, 02 Jun 2026 17:00:04 +0000</pubDate>
-      <sparkle:version>2.0.2</sparkle:version>
-      <sparkle:shortVersionString>2.0.2</sparkle:shortVersionString>
+      <title>Version 2.0.4</title>
+      <pubDate>Wed, 10 Jun 2026 00:45:34 +0000</pubDate>
+      <sparkle:version>2.0.4</sparkle:version>
+      <sparkle:shortVersionString>2.0.4</sparkle:shortVersionString>
       <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
-      <enclosure url="https://github.com/Gremble-io/detto/releases/download/v2.0.2/Detto.dmg"
-       sparkle:edSignature="ujXfCzTuOY5XZQ8QHq+auStlXMxKzM4B4ocM5xheJ599uCtreKHPGsbBrLcRCQoFlV5+VQSqRaBZeTSg13NICQ=="
-       length="14272715"
+      <enclosure url="https://github.com/Gremble-io/detto/releases/download/v2.0.4/Detto.dmg"
+       sparkle:edSignature="uGIJhpmpp0O+8IaQjLJ6pR38ymT4m8fltJUgojZtHwCCLT3qTQC3OX7fChyEyffI3nmqnCgRZ+rAcedicnwVCA=="
+       length="14271241"
        type="application/x-apple-diskimage" />
     </item>
   </channel>
